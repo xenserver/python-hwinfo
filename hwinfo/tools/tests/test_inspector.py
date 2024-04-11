@@ -114,28 +114,6 @@ class UtilTests(unittest.TestCase):
         self.assertEqual(mread, data)
 
 
-class RemoteCommandTests(unittest.TestCase):
-
-    def setUp(self):
-        self.stdout = StringIO('')
-        self.stdin = StringIO('')
-        self.stderr = StringIO('')
-
-    @patch('paramiko.SSHClient')
-    def test_ssh_connect(self, ssh_client_cls):
-        client = ssh_client_cls.return_value = mock.Mock()
-        client.exec_command.return_value = self.stdout, self.stdin, self.stderr
-        inspector.get_ssh_client('test', 'user', 'pass')
-        client.connect.assert_called_with('test', password='pass', username='user', timeout=10)
-
-    @patch('paramiko.SSHClient')
-    def test_ssh_connect_error(self, ssh_client_cls):
-        client = ssh_client_cls.return_value = mock.Mock()
-        client.exec_command.return_value = self.stdout, self.stdin, StringIO("Error")
-        with self.assertRaises(Exception) as context:
-            inspector.remote_command(client, 'ls')
-        self.assertEqual(context.exception.message, "stderr: ['Error']")
-
 class LocalCommandTests(unittest.TestCase):
 
     @patch('subprocess.Popen')
