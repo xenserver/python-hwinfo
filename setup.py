@@ -9,8 +9,8 @@ setup(
     version = '0.1.7',
     description = 'Library for parsing hardware info on Linux OSes.',
     url = 'https://github.com/rdobson/python-hwinfo',
-    download_url = 'https://github.com/rdobson/python-hwinfo/tarball/0.1.7',
     packages=find_packages(),
+    package_dir={'': '.'},  # Use the current directory as the package source directory
     entry_points = {
         'console_scripts': [
             'hwinfo = hwinfo.tools.inspector:main',

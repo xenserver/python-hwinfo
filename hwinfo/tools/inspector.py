@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser
-import paramiko
 import subprocess
 import os
 import sys
@@ -18,11 +17,6 @@ from hwinfo.pci.lspci import *
 from hwinfo.host import dmidecode
 from hwinfo.host import cpuinfo
 
-def get_ssh_client(host, username, password, timeout=10):
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(host, username=username, password=password, timeout=timeout)
-    return client
 
 def remote_command(client, cmd):
     cmdstr = ' '.join(cmd)
@@ -36,10 +30,10 @@ def remote_command(client, cmd):
 
 def local_command(cmd):
     cmdstr = ' '.join(cmd)
-    process = subprocess.Popen(cmdstr, stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+    process = subprocess.Popen(cmdstr, stdout=subprocess.PIPE, shell=True)
     stdout, stderr = process.communicate()
     if process.returncode == 0:
-        return stdout.strip()
+        return stdout.decode().strip()
     else:
         print("RC: %s" % process.returncode)
         print(stdout)
@@ -108,21 +102,12 @@ class Host(object):
         self.host = host
         self.username = username
         self.password = password
-        if self.is_remote():
-            self.client = get_ssh_client(self.host, self.username, self.password)
-
-    def __del__(self):
-        if self.client:
-            self.client.close()
 
     def is_remote(self):
         return self.host != 'localhost'
 
     def exec_command(self, cmd):
-        if self.is_remote():
-            return remote_command(self.client, cmd)
-        else:
-            return local_command(cmd)
+        return local_command(cmd)
 
     def get_lspci_data(self):
         return self.exec_command(['lspci', '-nnmm'])
@@ -170,6 +155,8 @@ class Host(object):
 
     def get_cpu_info(self):
         data = self.get_cpuinfo_data()
+        if data.startswith("b"):
+            data = data[2:]
         parser = cpuinfo.CPUInfoParser(data)
         return parser.parse_items()
 
@@ -204,7 +191,7 @@ def combine_recs(rec_list, key):
                 final_recs[rec_key][k] = v
         else:
             final_recs[rec_key] = rec
-    return final_recs.values()
+    return list(final_recs.values())
 
 
 class HostFromLogs(Host):

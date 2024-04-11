@@ -44,11 +44,11 @@ class TestSingleDeviceVVParse(unittest.TestCase):
     def test_pci_device_sub_string(self):
         rec = self.parser.parse_items().pop()
         self._assert_rec_key(rec, 'pci_device_sub_string')
-
+	    
     def test_pci_device_vpd_product_name(self):
         rec = self.parser.parse_items().pop()
         self._assert_rec_key(rec, 'pci_device_vpd_product_name')
-
+	    
 class TestMultiDeviceVVParse(unittest.TestCase):
 
     SAMPLE_DEVICE_FILE = "%s/lspci_vv" % DATA_DIR

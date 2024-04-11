@@ -60,7 +60,7 @@ class CommandParser(object):
             return [self.parse_item(self.DATA)]
         else:
             recs = []
-            for data in self.DATA.split(self.ITEM_SEPERATOR):
+            for data in self.DATA.split(self.ITEM_SEPERATOR)[:-1]:
                 rec = self.parse_item(data)
                 recs.append(rec)
             return recs
