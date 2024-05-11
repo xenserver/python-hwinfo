@@ -1,13 +1,14 @@
 """Module for unittesting dmidecode methods"""
 
+import os
 import unittest
 from hwinfo.host.dmidecode import *
 
-DATA_DIR = 'hwinfo/host/tests/data'
 
 class DmidecodeParserTests(unittest.TestCase):
 
-    DATA_FILE = "%s/%s" % (DATA_DIR, 'dmidecode')
+    pwd = os.path.dirname(os.path.abspath(__file__))
+    DATA_FILE = os.path.join(pwd, 'data', 'dmidecode')
 
     DATA_REC = {
         'bios_vendor_name': 'Dell Inc.',

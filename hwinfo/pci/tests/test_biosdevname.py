@@ -1,9 +1,8 @@
 """Module for unittesting biosdevname methods"""
 
+import os
 import unittest
 from hwinfo.pci.biosdevname import *
-
-DATA_DIR = 'hwinfo/pci/tests/data'
 
 class BiosdevnameDSingleDeviceParserTests(unittest.TestCase):
 
@@ -68,7 +67,8 @@ Embedded Index: 1"""
 
 class BiosdevnameDMultiDeviceTests(unittest.TestCase):
 
-    DATA_FILE = "%s/%s" % (DATA_DIR, 'biosdevname-d')
+    pwd = os.path.dirname(os.path.abspath(__file__))
+    DATA_FILE = os.path.join(pwd, 'data', 'biosdevname-d')
 
     def setUp(self):
         fh = open(self.DATA_FILE)

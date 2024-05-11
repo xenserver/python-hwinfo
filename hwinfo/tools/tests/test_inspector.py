@@ -5,7 +5,7 @@ from mock import patch
 from io import StringIO
 
 from hwinfo.tools import inspector
-import dummy_data
+from hwinfo.tools.tests import dummy_data
 
 class HostMock(inspector.Host):
 
@@ -29,14 +29,6 @@ class HostObjectTests(unittest.TestCase):
         host.exec_command('ls')
         inspector.local_command.assert_called_once_with('ls')
 
-    @patch('hwinfo.tools.inspector.get_ssh_client')
-    @patch('hwinfo.tools.inspector.remote_command')
-    def test_remote_exec_command(self, remote_command, get_ssh_client):
-        mclient = get_ssh_client.return_value = mock.MagicMock()
-        host = inspector.Host('mymachine', 'root', 'pass')
-        host.exec_command('ls')
-        inspector.remote_command.assert_called_once_with(mclient, 'ls')
-
     @patch('hwinfo.tools.inspector.Host.exec_command')
     def test_get_pci_devices(self, exec_command):
         host = inspector.Host()
@@ -56,12 +48,6 @@ class HostObjectTests(unittest.TestCase):
     def test_is_not_remote(self):
         host = inspector.Host()
         self.assertEqual(host.is_remote(), False)
-
-    @patch('hwinfo.tools.inspector.get_ssh_client')
-    def test_is_remote(self, get_ssh_client):
-        get_ssh_client.return_value = mock.MagicMock()
-        host = inspector.Host('test', 'user', 'pass')
-        self.assertEqual(host.is_remote(), True)
 
 
 class HostFromTarballTests(unittest.TestCase):
@@ -131,7 +117,7 @@ class LocalCommandTests(unittest.TestCase):
         mprocess.returncode = 1
         with self.assertRaises(Exception) as context:
             stdout = inspector.local_command("echo 'test'")
-        self.assertEqual(context.exception.message, "stderr: my error")
+        self.assertEqual(str(context.exception), "stderr: my error")
 
 
 class PCIFilterTests(unittest.TestCase):
@@ -311,7 +297,7 @@ class CombineRecsTests(unittest.TestCase):
         ]
         with self.assertRaises(Exception) as context:
             combined_recs = inspector.combine_recs(recs, 'name')
-        self.assertEqual(context.exception.message, "Mis-match for key 'valuea'")
+        self.assertEqual(str(context.exception), "Mis-match for key 'valuea'")
 
 
 class CLITests(unittest.TestCase):

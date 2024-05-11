@@ -30,10 +30,11 @@ def remote_command(client, cmd):
 
 def local_command(cmd):
     cmdstr = ' '.join(cmd)
-    process = subprocess.Popen(cmdstr, stdout=subprocess.PIPE, shell=True)
+    process = subprocess.Popen(cmdstr, stdout=subprocess.PIPE, shell=True,
+                               universal_newlines=True)
     stdout, stderr = process.communicate()
     if process.returncode == 0:
-        return stdout.decode().strip()
+        return stdout.strip()
     else:
         print("RC: %s" % process.returncode)
         print(stdout)

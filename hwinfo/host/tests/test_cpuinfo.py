@@ -1,9 +1,9 @@
 """Module for unittesting dmidecode methods"""
 
+import os
 import unittest
 from hwinfo.host.cpuinfo import CPUInfoParser
 
-DATA_DIR = 'hwinfo/host/tests/data'
 
 class CPUInfoParserTests(unittest.TestCase):
 
@@ -115,7 +115,8 @@ power management:
 
 class CPUInfoMultipleParseTest(unittest.TestCase):
 
-    DATA_FILE = "%s/cpuinfo" % DATA_DIR
+    pwd = os.path.dirname(os.path.abspath(__file__))
+    DATA_FILE = os.path.join(pwd, 'data', 'cpuinfo')
 
     def setUp(self):
         fh = open(self.DATA_FILE)
