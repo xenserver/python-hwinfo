@@ -1,13 +1,14 @@
 """Unit tests for the lspci module"""
 
+import os
 import unittest
 from hwinfo.pci.lspci import *
 
-DATA_DIR = 'hwinfo/pci/tests/data'
 
 class TestSingleDeviceVVParse(unittest.TestCase):
 
-    SAMPLE_DEVICE_FILE = "%s/single_network_device_lspci_vv" % DATA_DIR
+    pwd = os.path.dirname(os.path.abspath(__file__))
+    SAMPLE_DEVICE_FILE = os.path.join(pwd, 'data', 'single_network_device_lspci_vv')
     DEVICE_DATA = ""
 
     DEVICE_REC = {
@@ -51,7 +52,8 @@ class TestSingleDeviceVVParse(unittest.TestCase):
 	    
 class TestMultiDeviceVVParse(unittest.TestCase):
 
-    SAMPLE_DEVICE_FILE = "%s/lspci_vv" % DATA_DIR
+    pwd = os.path.dirname(os.path.abspath(__file__))
+    SAMPLE_DEVICE_FILE = os.path.join(pwd, 'data', 'lspci_vv')
 
     def setUp(self):
         fh = open(self.SAMPLE_DEVICE_FILE)
@@ -102,7 +104,8 @@ class TestSingleDeviceNParse(unittest.TestCase):
 
 class TestMultiDeviceNParse(unittest.TestCase):
  
-    SAMPLE_DEVICE_FILE = "%s/lspci_n" % DATA_DIR
+    pwd = os.path.dirname(os.path.abspath(__file__))
+    SAMPLE_DEVICE_FILE = os.path.join(pwd, 'data', 'lspci_n')
 
     def setUp(self):
         fh = open(self.SAMPLE_DEVICE_FILE)
@@ -318,7 +321,8 @@ class BrocadeNetDeviceParser(TestSingleDeviceNNMMParse):
 
 class TestMultiDeviceNNMMParse(unittest.TestCase):
 
-    SAMPLE_FILE = '%s/lspci-nnmm' % DATA_DIR
+    pwd = os.path.dirname(os.path.abspath(__file__))
+    SAMPLE_FILE = os.path.join(pwd, 'data', 'lspci-nnmm')
 
     def setUp(self):
         fh = open(self.SAMPLE_FILE)
