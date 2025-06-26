@@ -76,6 +76,9 @@ class PCIDevice(object):
     def get_subvendor_id(self):
         return self._fmt(self.lookup_value('pci_subvendor_id'))
 
+    def get_driver(self):
+        return self._fmt(self.lookup_value('pci_device_driver'))
+
     def get_pci_id(self):
         return "%s:%s %s:%s" % (
             self._fmt(self.lookup_value('pci_vendor_id')),
@@ -109,5 +112,6 @@ class PCIDevice(object):
         rec['subdevice_name'] = self.get_subdevice_name()
         rec['subvendor_id'] = self.get_subvendor_id()
         rec['subdevice_id'] = self.get_subdevice_id()
+        rec['driver'] = self.get_driver()
 
         return rec

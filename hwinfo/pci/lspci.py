@@ -16,6 +16,7 @@ class LspciVVParser(CommandParser):
         r'(?P<pci_device_bus_id>(' + BUSID_REGEX + r'))\ (?P<pci_device_class_name>' + LABEL_REGEX + r'):\ (?P<pci_device_string>(.*))\n',
         r'Product\ Name:\ (?P<pci_device_vpd_product_name>(.)*)\n',
         r'Subsystem:\ (?P<pci_device_sub_string>(.)*)\n',
+        r'Kernel driver in use:\ (?P<pci_device_driver>\S+)\n',
     ]
 
     ITEM_SEPERATOR = "\n\n"
@@ -24,6 +25,7 @@ class LspciVVParser(CommandParser):
         'pci_device_bus_id',
         'pci_device_class_name',
         'pci_device_string',
+        'pci_device_driver',
     ]
 
 class LspciNParser(CommandParser):
