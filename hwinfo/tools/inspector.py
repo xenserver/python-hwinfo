@@ -112,6 +112,9 @@ class Host(object):
 
     def get_lspci_data(self):
         return self.exec_command(['lspci', '-nnmm'])
+    
+    def get_lspci_vv_data(self):
+        return self.exec_command(['lspci', '-vv'])
 
     def get_dmidecode_data(self):
         return self.exec_command(['dmidecode'])
@@ -134,6 +137,16 @@ class Host(object):
         data = self.get_lspci_data()
         parser = LspciNNMMParser(data)
         devices = parser.parse_items()
+        # Parse also lspci -vv for driver information
+        data = self.get_lspci_vv_data()
+        parser = LspciVVParser(data)
+        devices_vv = parser.parse_items()
+        driver_info = {d['pci_device_bus_id']: d.get('pci_device_driver') for d in devices_vv if 'pci_device_bus_id' in d}
+        # Add driver information to devices
+        for device in devices:
+            bus_id = device.get('pci_device_bus_id')
+            if bus_id and bus_id in driver_info:
+                device['pci_device_driver'] = driver_info[bus_id]
         return [PCIDevice(device) for device in devices]
 
     def get_info(self):
@@ -206,6 +219,9 @@ class HostFromLogs(Host):
 
     def get_lspci_data(self):
         return self._load_from_file('lspci-nnm.out')
+    
+    def get_lspci_vv_data(self):
+        return self._load_from_file('lspci-vv.out')
 
     def get_dmidecode_data(self):
         return self._load_from_file('dmidecode.out')
@@ -360,7 +376,7 @@ def system_info(host, options):
 
     return "".join(info).strip()
 
-def export_system_info(host, options):
+def system_info_as_dict(host, options):
     rec = {}
 
     if 'bios' in options:
@@ -380,6 +396,11 @@ def export_system_info(host, options):
     if 'gpu' in options:
         devices = pci_filter_for_gpu(host.get_pci_devices())
         rec["gpus"] = [dev.get_rec() for dev in devices]
+
+    return rec
+
+def export_system_info(host, options):
+    rec = system_info_as_dict(host, options)
 
     return json.dumps(rec, indent=4, separators=(',', ': '))
 
